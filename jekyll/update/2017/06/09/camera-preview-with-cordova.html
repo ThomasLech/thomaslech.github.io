@@ -284,13 +284,32 @@ Next, we create rectangle &amp; submit button. When button is clicked we <strong
     <span class="nl">margin</span><span class="p">:</span> <span class="nb">auto</span><span class="p">;</span>
 <span class="p">}</span></code></pre></figure>
 
+<h4 id="status-bar"><strong>Status bar</strong></h4>
+<p>Our app will be looking way better with <strong>customized status bar</strong>.<br />
+Cordova enables us customizing status bar with <strong>cordova-plugin-statusbar</strong>.<br />
+For example we can change its background color.</p>
+<ul>
+  <li>Install plugin: <code class="highlighter-rouge">cordova plugin add cordova-plugin-statusbar</code>.</li>
+  <li>Head over to <strong><em>config.xml</em></strong> inside your project’s root directory.</li>
+  <li>Insert <code class="highlighter-rouge">&lt;preference name="StatusBarBackgroundColor" value="HEX_RGB_CODE" /&gt;</code>.</li>
+</ul>
+
+<p>For more info visit <a href="https://cordova.apache.org/docs/en/latest/reference/cordova-plugin-statusbar/#statusbar">statusbar plugin docs</a></p>
+
+<h4 id="resize-rectangle"><strong>Resize rectangle</strong></h4>
+<p>You might also make elements <strong>draggable/resizable</strong> using <strong>jQuery UI Touch Punch</strong>.<br />
+Visit <a href="http://touchpunch.furf.com/">their docs</a> for installation guide and examples.</p>
+
 <h2 id="results">Results</h2>
 <p><img src="https://user-images.githubusercontent.com/22115481/27040520-85f44652-4f91-11e7-8e48-9a5334675414.png" alt="cordova-camera-preview-results" /></p>
+
+<h2 id="full-code">Full code</h2>
+<p>Visit my repo: <a href="https://github.com/ThomasLech/cordova-camera-preview-example">cordova-camera-preview-example</a></p>
 
 <h2 id="conclusion">Conclusion</h2>
 <p>Now, we are left with <strong>encoded cropped image</strong>. We can send it to the server, so that we get prediction back.<br />
 In the next session, I’ll show you how to handle such a request with <strong>Django REST framework</strong>.<br />
-After that I’ll build <strong>predictive model</strong> to recognise <strong>digits combined with math operators</strong>.</p>
+After that I’ll build a <strong>predictive model</strong> to recognize <strong>digits combined with math operators</strong> from an image.</p>
 
 
 	</div>

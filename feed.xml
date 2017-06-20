@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.4.3">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2017-06-17T09:42:03+02:00</updated><id>/</id><title type="html">MachineLearning-Blog</title><subtitle>Blog devoted to Machine Learning, web &amp; mobile development and from time to time to some stuff not related to technology.
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.4.3">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2017-06-20T23:02:33+02:00</updated><id>/</id><title type="html">MachineLearning-Blog</title><subtitle>Blog devoted to Machine Learning, web &amp; mobile development and from time to time to some stuff not related to technology.
 </subtitle><entry><title type="html">Beautiful camera preview with cordova</title><link href="/jekyll/update/2017/06/09/camera-preview-with-cordova.html" rel="alternate" type="text/html" title="Beautiful camera preview with cordova" /><published>2017-06-09T22:21:03+02:00</published><updated>2017-06-09T22:21:03+02:00</updated><id>/jekyll/update/2017/06/09/camera-preview-with-cordova</id><content type="html" xml:base="/jekyll/update/2017/06/09/camera-preview-with-cordova.html">&lt;p&gt;Hi, recently I wanted to build a mobile app for my ML project.&lt;/p&gt;
 
 &lt;p&gt;As usual I was planning to acomplish this with java.&lt;br /&gt;
@@ -212,10 +212,29 @@ Next, we create rectangle &amp;amp; submit button. When button is clicked we &lt
     &lt;span class=&quot;nl&quot;&gt;margin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;auto&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
+&lt;h4 id=&quot;status-bar&quot;&gt;&lt;strong&gt;Status bar&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;Our app will be looking way better with &lt;strong&gt;customized status bar&lt;/strong&gt;.&lt;br /&gt;
+Cordova enables us customizing status bar with &lt;strong&gt;cordova-plugin-statusbar&lt;/strong&gt;.&lt;br /&gt;
+For example we can change its background color.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Install plugin: &lt;code class=&quot;highlighter-rouge&quot;&gt;cordova plugin add cordova-plugin-statusbar&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;Head over to &lt;strong&gt;&lt;em&gt;config.xml&lt;/em&gt;&lt;/strong&gt; inside your project’s root directory.&lt;/li&gt;
+  &lt;li&gt;Insert &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;preference name=&quot;StatusBarBackgroundColor&quot; value=&quot;HEX_RGB_CODE&quot; /&amp;gt;&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;For more info visit &lt;a href=&quot;https://cordova.apache.org/docs/en/latest/reference/cordova-plugin-statusbar/#statusbar&quot;&gt;statusbar plugin docs&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;resize-rectangle&quot;&gt;&lt;strong&gt;Resize rectangle&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;You might also make elements &lt;strong&gt;draggable/resizable&lt;/strong&gt; using &lt;strong&gt;jQuery UI Touch Punch&lt;/strong&gt;.&lt;br /&gt;
+Visit &lt;a href=&quot;http://touchpunch.furf.com/&quot;&gt;their docs&lt;/a&gt; for installation guide and examples.&lt;/p&gt;
+
 &lt;h2 id=&quot;results&quot;&gt;Results&lt;/h2&gt;
 &lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/22115481/27040520-85f44652-4f91-11e7-8e48-9a5334675414.png&quot; alt=&quot;cordova-camera-preview-results&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;full-code&quot;&gt;Full code&lt;/h2&gt;
+&lt;p&gt;Visit my repo: &lt;a href=&quot;https://github.com/ThomasLech/cordova-camera-preview-example&quot;&gt;cordova-camera-preview-example&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
 &lt;p&gt;Now, we are left with &lt;strong&gt;encoded cropped image&lt;/strong&gt;. We can send it to the server, so that we get prediction back.&lt;br /&gt;
 In the next session, I’ll show you how to handle such a request with &lt;strong&gt;Django REST framework&lt;/strong&gt;.&lt;br /&gt;
-After that I’ll build &lt;strong&gt;predictive model&lt;/strong&gt; to recognise &lt;strong&gt;digits combined with math operators&lt;/strong&gt;.&lt;/p&gt;</content><author><name></name></author><summary type="html">Hi, recently I wanted to build a mobile app for my ML project.</summary></entry></feed>
+After that I’ll build a &lt;strong&gt;predictive model&lt;/strong&gt; to recognize &lt;strong&gt;digits combined with math operators&lt;/strong&gt; from an image.&lt;/p&gt;</content><author><name></name></author><summary type="html">Hi, recently I wanted to build a mobile app for my ML project.</summary></entry></feed>
