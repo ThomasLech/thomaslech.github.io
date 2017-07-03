@@ -1,5 +1,80 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.4.3">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2017-06-20T23:02:33+02:00</updated><id>/</id><title type="html">MachineLearning-Blog</title><subtitle>Blog devoted to Machine Learning, web &amp; mobile development and from time to time to some stuff not related to technology.
-</subtitle><entry><title type="html">Beautiful camera preview with cordova</title><link href="/jekyll/update/2017/06/09/camera-preview-with-cordova.html" rel="alternate" type="text/html" title="Beautiful camera preview with cordova" /><published>2017-06-09T22:21:03+02:00</published><updated>2017-06-09T22:21:03+02:00</updated><id>/jekyll/update/2017/06/09/camera-preview-with-cordova</id><content type="html" xml:base="/jekyll/update/2017/06/09/camera-preview-with-cordova.html">&lt;p&gt;Hi, recently I wanted to build a mobile app for my ML project.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.4.3">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2017-07-03T19:23:03+02:00</updated><id>/</id><title type="html">MachineLearning-Blog</title><subtitle>Blog devoted to Machine Learning, web &amp; mobile development and from time to time to some stuff not related to technology.
+</subtitle><entry><title type="html">Store base64 images using DRF</title><link href="/2017/06/25/store-base64-images-with-Django-REST-framework.html" rel="alternate" type="text/html" title="Store base64 images using DRF" /><published>2017-06-25T14:00:00+02:00</published><updated>2017-06-25T14:00:00+02:00</updated><id>/2017/06/25/store-base64-images-with-Django-REST-framework</id><content type="html" xml:base="/2017/06/25/store-base64-images-with-Django-REST-framework.html">&lt;p&gt;Hey, in this post we’ll learn how to handle images requested by the users of &lt;a href=&quot;http://127.0.0.1:4000/2017/06/09/camera-preview-with-cordova.html&quot;&gt;our app&lt;/a&gt;.&lt;br /&gt;
+These images will be encoded in &lt;strong&gt;base64 format&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;what-is-base64-format&quot;&gt;What is base64 format?&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Base64&quot;&gt;Base64&lt;/a&gt; is a way to represent binary data(stream of 1s and 0s) in an ASCII string format&lt;/strong&gt;.&lt;br /&gt;
+It was introduced in order to &lt;strong&gt;avoid data corruption when transmitted in binary format&lt;/strong&gt; across a network.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Examples of binary data corruption&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Some protocols may interpret your binary data as &lt;em&gt;control characters&lt;/em&gt; (like a modem).&lt;/li&gt;
+  &lt;li&gt;The underlying protocol might think that you’ve entered a special character combination (like how FTP translates &lt;em&gt;line endings&lt;/em&gt;).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;So, after base64 image was &lt;strong&gt;successfully transmitted&lt;/strong&gt; we can decode it back to binary data.&lt;br /&gt;
+There are two reasons why we are doing that:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;We want to run &lt;strong&gt;image analysis&lt;/strong&gt; scripts using &lt;a href=&quot;http://scikit-image.org/&quot;&gt;scikit-image&lt;/a&gt; and &lt;a href=&quot;http://opencv.org/&quot;&gt;opencv&lt;/a&gt; both of which naturally &lt;strong&gt;only support binary input&lt;/strong&gt;.&lt;/li&gt;
+  &lt;li&gt;In order to save image in the database we can only provide DRF with an image encoded in binary format.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;After we save the image in the database and our recognizer has already figured out(predicted) what is on the image, we can &lt;strong&gt;return prediction back to user&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;We are going to do all of this on a &lt;strong&gt;server-side&lt;/strong&gt; using &lt;strong&gt;Django&lt;/strong&gt; and &lt;strong&gt;Django REST Framework&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;what-is-django&quot;&gt;What is Django?&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.djangoproject.com/&quot;&gt;Django&lt;/a&gt; is a free and open source &lt;strong&gt;web application framework&lt;/strong&gt;, written in Python.
+The role of Django boils down to &lt;strong&gt;communicating with your app’s database&lt;/strong&gt; and serving this data to client along with static files.
+Also, it has a set of handy components that let you for example handle &lt;strong&gt;media uploads&lt;/strong&gt;, &lt;strong&gt;form validation&lt;/strong&gt; or &lt;strong&gt;user authentication&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;h4 id=&quot;django-project-basic-scheme&quot;&gt;Django project basic scheme:&lt;/h4&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Define Django models and fields&lt;/strong&gt;.&lt;br /&gt;
+Generally, each model maps to a single database table, e.g. users table.&lt;br /&gt;
+Fields are table columns, e.g. username, password.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Specify URL address and point it to particular view&lt;/strong&gt;.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Build a view&lt;/strong&gt;&lt;br /&gt;
+View defines a behavior after someone entered specific address.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;what-is-django-rest-framework&quot;&gt;What is Django REST Framework?&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&quot;http://www.django-rest-framework.org/&quot;&gt;Django REST Framework&lt;/a&gt;(&lt;strong&gt;DRF&lt;/strong&gt;) is a third-party app for Django.
+DRF gives you a lot of convenience in &lt;strong&gt;inspecting&lt;/strong&gt; and &lt;strong&gt;managing&lt;/strong&gt; you database(via &lt;strong&gt;“Browsable” API&lt;/strong&gt;).
+It also does very well in &lt;strong&gt;serializing&lt;/strong&gt;/&lt;strong&gt;deserializing&lt;/strong&gt; data.&lt;/p&gt;
+
+&lt;h2 id=&quot;client-side&quot;&gt;Client-side&lt;/h2&gt;
+&lt;p&gt;Just to recall, we are sending cropped base64 image over the &lt;strong&gt;http protocol&lt;/strong&gt; just like this:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// Specify appropriate server endpoint address&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;// Ending slash in the address is necessary&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;post&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;http://server_address/&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;// Data passed along a request&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;cropped_img_base64&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;status&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;xhr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;// Success callback&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;alert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'Status: '&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;status&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'\Data: '&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;fail&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;status&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;xhr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// Failure callback&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;alert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'Status: '&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;status&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'\nReason: '&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;xhr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;We use &lt;a href=&quot;https://api.jquery.com/jquery.post/&quot;&gt;$.post&lt;/a&gt; method which performs &lt;strong&gt;asynchronous HTTP requests&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Note that we do not specify any authentication credentials.&lt;br /&gt;
+Our server won’t require any authentication.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;server-side&quot;&gt;Server-side&lt;/h2&gt;
+&lt;p&gt;Before we dive into Django REST Framework code, let’s go through project setup first.&lt;/p&gt;
+
+&lt;h3 id=&quot;django-rest-framework-setup&quot;&gt;Django REST Framework Setup&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;TO DO&lt;/em&gt;&lt;/p&gt;</content><author><name>Thomas Lech</name><email>itsawesome17@gmail.com</email></author><summary type="html">Hey, in this post we’ll learn how to handle images requested by the users of our app. These images will be encoded in base64 format.</summary></entry><entry><title type="html">Beautiful camera preview with cordova</title><link href="/2017/06/09/camera-preview-with-cordova.html" rel="alternate" type="text/html" title="Beautiful camera preview with cordova" /><published>2017-06-09T22:21:03+02:00</published><updated>2017-06-09T22:21:03+02:00</updated><id>/2017/06/09/camera-preview-with-cordova</id><content type="html" xml:base="/2017/06/09/camera-preview-with-cordova.html">&lt;p&gt;Hi, recently I wanted to build a mobile app for my ML project.&lt;/p&gt;
 
 &lt;p&gt;As usual I was planning to acomplish this with java.&lt;br /&gt;
 I started searching through Android forums and its community to find out more about manipulating camera preview.&lt;br /&gt;
@@ -62,6 +137,10 @@ However, &lt;strong&gt;building the app directly on mobile device does the trick
 
 &lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-html&quot; data-lang=&quot;html&quot;&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;body&amp;gt;&lt;/span&gt;
     &lt;span class=&quot;nt&quot;&gt;&amp;lt;script &lt;/span&gt;&lt;span class=&quot;na&quot;&gt;type=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;text/javascript&quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;src=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;cordova.js&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&amp;lt;/script&amp;gt;&lt;/span&gt;
+
+    &lt;span class=&quot;c&quot;&gt;&amp;lt;!-- jQuery for http POST request --&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;script &lt;/span&gt;&lt;span class=&quot;na&quot;&gt;src=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;https://code.jquery.com/jquery-1.12.4.js&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&amp;lt;/script&amp;gt;&lt;/span&gt;
+
     &lt;span class=&quot;c&quot;&gt;&amp;lt;!-- crop.js contains our crop function --&amp;gt;&lt;/span&gt;
     &lt;span class=&quot;nt&quot;&gt;&amp;lt;script &lt;/span&gt;&lt;span class=&quot;na&quot;&gt;type=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;text/javascript&quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;src=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;js/crop.js&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&amp;lt;/script&amp;gt;&lt;/span&gt;
     &lt;span class=&quot;nt&quot;&gt;&amp;lt;script &lt;/span&gt;&lt;span class=&quot;na&quot;&gt;type=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;text/javascript&quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;src=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;js/index.js&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&amp;lt;/script&amp;gt;&lt;/span&gt;
@@ -91,6 +170,7 @@ Notice &lt;strong&gt;&lt;em&gt;crop.js&lt;/em&gt;&lt;/strong&gt; file. Later in 
     &lt;span class=&quot;c1&quot;&gt;// Take a look at docs: https://github.com/cordova-plugin-camera-preview/cordova-plugin-camera-preview#methods&lt;/span&gt;
     &lt;span class=&quot;nx&quot;&gt;CameraPreview&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;startCamera&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
 
+
     &lt;span class=&quot;c1&quot;&gt;// Create a rectangle &amp;amp; button&lt;/span&gt;
     &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;rect&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;document&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;createElement&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'div'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
     &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;button&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;document&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;createElement&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'img'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
@@ -117,11 +197,25 @@ Notice &lt;strong&gt;&lt;em&gt;crop.js&lt;/em&gt;&lt;/strong&gt; file. Later in 
         &lt;span class=&quot;nx&quot;&gt;CameraPreview&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;takePicture&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;base64PictureData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
 
             &lt;span class=&quot;c1&quot;&gt;// We pass width, height, x and y coordinates of our rectangle to crop func&lt;/span&gt;
-            &lt;span class=&quot;c1&quot;&gt;// Our crop function return cropped image in base64 format&lt;/span&gt;
-            &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;cropped_img&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;crop&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;base64PictureData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;rect_width&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;rect_height&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;x_coord&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;y_coord&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+            &lt;span class=&quot;c1&quot;&gt;// BEFORE crop function ends, it sends cropped base64 image to a server&lt;/span&gt;
+            &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;cropped_img&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;crop&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;base64PictureData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;rect_width&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;rect_height&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;x_coord&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;y_coord&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cropped_img_base64&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
 
-            &lt;span class=&quot;c1&quot;&gt;// Now we are ready to send cropped image TO SERVER&lt;/span&gt;
-        &lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+                &lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;post&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;http://server_address/&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; 
+                    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+                        &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;cropped_img_base64&lt;/span&gt;
+                    &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+                    &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;status&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;xhr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+                        &lt;span class=&quot;c1&quot;&gt;// Success callback&lt;/span&gt;
+                        &lt;span class=&quot;nx&quot;&gt;alert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'Status: '&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;status&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'\Data: '&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+                    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+                &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+                &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;fail&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;status&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;xhr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+                    &lt;span class=&quot;c1&quot;&gt;// Failure callback&lt;/span&gt;
+                    &lt;span class=&quot;nx&quot;&gt;alert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'Status: '&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;status&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'\nReason: '&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;xhr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+                &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+
+            &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
     &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
@@ -131,7 +225,7 @@ Next, we create rectangle &amp;amp; submit button. When button is clicked we &lt
 
 &lt;p&gt;&lt;strong&gt;&lt;em&gt;crop.js&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
 
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;crop&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;base64PictureData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;rect_width&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;rect_height&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;x_coord&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;y_coord&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;crop&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;base64PictureData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;rect_width&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;rect_height&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;x_coord&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;y_coord&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;callback&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
 
     &lt;span class=&quot;c1&quot;&gt;// image will contain ORIGINAL image&lt;/span&gt;
     &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;image&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Image&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
@@ -166,6 +260,9 @@ Next, we create rectangle &amp;amp; submit button. When button is clicked we &lt
 
         &lt;span class=&quot;c1&quot;&gt;// Get base64 representation of cropped image&lt;/span&gt;
         &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;cropped_img_base64&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;canvas&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;toDataURL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+
+        &lt;span class=&quot;c1&quot;&gt;// Now we are ready to send cropped image TO SERVER&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;callback&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cropped_img_base64&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
 
         &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;cropped_img_base64&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
     &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
@@ -237,4 +334,4 @@ Visit &lt;a href=&quot;http://touchpunch.furf.com/&quot;&gt;their docs&lt;/a&gt;
 &lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
 &lt;p&gt;Now, we are left with &lt;strong&gt;encoded cropped image&lt;/strong&gt;. We can send it to the server, so that we get prediction back.&lt;br /&gt;
 In the next session, I’ll show you how to handle such a request with &lt;strong&gt;Django REST framework&lt;/strong&gt;.&lt;br /&gt;
-After that I’ll build a &lt;strong&gt;predictive model&lt;/strong&gt; to recognize &lt;strong&gt;digits combined with math operators&lt;/strong&gt; from an image.&lt;/p&gt;</content><author><name></name></author><summary type="html">Hi, recently I wanted to build a mobile app for my ML project.</summary></entry></feed>
+After that I’ll build a &lt;strong&gt;predictive model&lt;/strong&gt; to recognize &lt;strong&gt;digits combined with math operators&lt;/strong&gt; from an image.&lt;/p&gt;</content><author><name>Thomas Lech</name><email>itsawesome17@gmail.com</email></author><summary type="html">Hi, recently I wanted to build a mobile app for my ML project.</summary></entry></feed>

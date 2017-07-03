@@ -9,13 +9,31 @@
   <title>Beautiful camera preview with cordova</title>
   <meta name="description" content="Hi, recently I wanted to build a mobile app for my ML project.">
 
+  <meta property="og:site_name" content="MachineLearning-Blog">
+  
+  <meta property="og:title" content="Beautiful camera preview with cordova">
+  <meta property="og:type" content="article">
+  <meta property="og:description" content="Hi, recently I wanted to build a mobile app for my ML project.
+
+"/>
+  
+  
+  <meta property="article:published_time" content="2017-06-09T22:21:03+02:00">
+  <meta property="article:author" content="/about/">
+  
+  <meta property="og:url" content="/2017/06/09/camera-preview-with-cordova.html" />
+  
+  <meta itemprop="keywords" content="" />
+  
+  
+  
+
   <link rel="stylesheet" href="/assets/main.css">
-  <link rel="canonical" href="/jekyll/update/2017/06/09/camera-preview-with-cordova.html">
+  <link rel="canonical" href="/2017/06/09/camera-preview-with-cordova.html">
   <link rel="alternate" type="application/rss+xml" title="MachineLearning-Blog" href="/feed.xml">
   
   
 </head>
-
 
   <body>
 
@@ -64,10 +82,45 @@
 
     <main class="page-content" aria-label="Content">
       <div class="wrapper">
-        <article class="post">
+        
 
+
+<article class="post">
 	<header class="post-header">
-		<h1 class="post-title">Beautiful camera preview with cordova</h1>
+		<h1 class="post-title" itemprop="name headline">Beautiful camera preview with cordova</h1>
+	    <p class="post-meta">
+
+		    <time datetime="2017-06-09T22:21:03+02:00" itemprop="datePublished">Jun 9, 2017</time>
+		    <meta content="2017-06-09T22:21:03+02:00" itemprop="dateModified" />
+		     •
+		    <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+		      <span itemprop="name">Thomas Lech</span>
+		      <meta itemprop="email" content="itsawesome17@gmail.com" />
+		      <meta itemprop="image" content="" />
+		      
+		      <a
+		        class="fa fa-envelope"
+		        title="contact me via e-mail"
+		        href="mailto:itsawesome17@gmail.com">&nbsp;</a>
+		      
+		    </span>
+		    <span itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+		      <meta itemprop="name" content="" />
+		      <span itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+		        <meta itemprop="url" content="/favicon.png" />
+		        <meta itemprop="height" content="142" />
+		        <meta itemprop="width" content="128" />
+		      </span>
+		    </span>
+		    
+		    <meta itemprop="mainEntityOfPage" content="" />
+		    <span itemprop="image" itemscope itemtype="http://schema.org/ImageObject">
+		      <meta itemprop="url" content="/favicon.png" />
+		      <meta itemprop="height" content="142" />
+		      <meta itemprop="width" content="128" />
+		    </span>
+
+	    </p>
 	</header>
 
 	<div class="post-content">
@@ -134,6 +187,10 @@ However, <strong>building the app directly on mobile device does the trick</stro
 
 <figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;body&gt;</span>
     <span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span> <span class="na">src=</span><span class="s">"cordova.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+
+    <span class="c">&lt;!-- jQuery for http POST request --&gt;</span>
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"https://code.jquery.com/jquery-1.12.4.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+
     <span class="c">&lt;!-- crop.js contains our crop function --&gt;</span>
     <span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span> <span class="na">src=</span><span class="s">"js/crop.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
     <span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span> <span class="na">src=</span><span class="s">"js/index.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
@@ -163,6 +220,7 @@ Notice <strong><em>crop.js</em></strong> file. Later in this post we will define
     <span class="c1">// Take a look at docs: https://github.com/cordova-plugin-camera-preview/cordova-plugin-camera-preview#methods</span>
     <span class="nx">CameraPreview</span><span class="p">.</span><span class="nx">startCamera</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
 
+
     <span class="c1">// Create a rectangle &amp; button</span>
     <span class="kd">var</span> <span class="nx">rect</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">'div'</span><span class="p">);</span>
     <span class="kd">var</span> <span class="nx">button</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">'img'</span><span class="p">);</span>
@@ -189,11 +247,25 @@ Notice <strong><em>crop.js</em></strong> file. Later in this post we will define
         <span class="nx">CameraPreview</span><span class="p">.</span><span class="nx">takePicture</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">base64PictureData</span><span class="p">)</span> <span class="p">{</span>
 
             <span class="c1">// We pass width, height, x and y coordinates of our rectangle to crop func</span>
-            <span class="c1">// Our crop function return cropped image in base64 format</span>
-            <span class="kd">var</span> <span class="nx">cropped_img</span> <span class="o">=</span> <span class="nx">crop</span><span class="p">(</span><span class="nx">base64PictureData</span><span class="p">,</span> <span class="nx">rect_width</span><span class="p">,</span> <span class="nx">rect_height</span><span class="p">,</span> <span class="nx">x_coord</span><span class="p">,</span> <span class="nx">y_coord</span><span class="p">);</span>
+            <span class="c1">// BEFORE crop function ends, it sends cropped base64 image to a server</span>
+            <span class="kd">var</span> <span class="nx">cropped_img</span> <span class="o">=</span> <span class="nx">crop</span><span class="p">(</span><span class="nx">base64PictureData</span><span class="p">,</span> <span class="nx">rect_width</span><span class="p">,</span> <span class="nx">rect_height</span><span class="p">,</span> <span class="nx">x_coord</span><span class="p">,</span> <span class="nx">y_coord</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cropped_img_base64</span><span class="p">)</span> <span class="p">{</span>
 
-            <span class="c1">// Now we are ready to send cropped image TO SERVER</span>
-        <span class="p">})</span>
+                <span class="nx">$</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s2">"http://server_address/"</span><span class="p">,</span> 
+                    <span class="p">{</span>
+                        <span class="na">image</span><span class="p">:</span> <span class="nx">cropped_img_base64</span>
+                    <span class="p">},</span>
+                    <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">status</span><span class="p">,</span> <span class="nx">xhr</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="c1">// Success callback</span>
+                        <span class="nx">alert</span><span class="p">(</span><span class="s1">'Status: '</span> <span class="o">+</span> <span class="nx">status</span> <span class="o">+</span> <span class="s1">'\Data: '</span> <span class="o">+</span> <span class="nx">data</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">)</span>
+                <span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">status</span><span class="p">,</span> <span class="nx">xhr</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="c1">// Failure callback</span>
+                    <span class="nx">alert</span><span class="p">(</span><span class="s1">'Status: '</span> <span class="o">+</span> <span class="nx">status</span> <span class="o">+</span> <span class="s1">'\nReason: '</span> <span class="o">+</span> <span class="nx">xhr</span><span class="p">);</span>
+                <span class="p">});</span>
+
+            <span class="p">});</span>
+        <span class="p">});</span>
     <span class="p">};</span>
 <span class="p">},</span></code></pre></figure>
 
@@ -203,7 +275,7 @@ Next, we create rectangle &amp; submit button. When button is clicked we <strong
 
 <p><strong><em>crop.js</em></strong></p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">crop</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">base64PictureData</span><span class="p">,</span> <span class="nx">rect_width</span><span class="p">,</span> <span class="nx">rect_height</span><span class="p">,</span> <span class="nx">x_coord</span><span class="p">,</span> <span class="nx">y_coord</span><span class="p">)</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">crop</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">base64PictureData</span><span class="p">,</span> <span class="nx">rect_width</span><span class="p">,</span> <span class="nx">rect_height</span><span class="p">,</span> <span class="nx">x_coord</span><span class="p">,</span> <span class="nx">y_coord</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
 
     <span class="c1">// image will contain ORIGINAL image</span>
     <span class="kd">var</span> <span class="nx">image</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Image</span><span class="p">();</span>
@@ -238,6 +310,9 @@ Next, we create rectangle &amp; submit button. When button is clicked we <strong
 
         <span class="c1">// Get base64 representation of cropped image</span>
         <span class="kd">var</span> <span class="nx">cropped_img_base64</span> <span class="o">=</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">toDataURL</span><span class="p">();</span>
+
+        <span class="c1">// Now we are ready to send cropped image TO SERVER</span>
+        <span class="nx">callback</span><span class="p">(</span><span class="nx">cropped_img_base64</span><span class="p">);</span>
 
         <span class="k">return</span> <span class="nx">cropped_img_base64</span><span class="p">;</span>
     <span class="p">};</span>
